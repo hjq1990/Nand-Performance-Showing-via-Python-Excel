@@ -1,7 +1,7 @@
 Nand-Performance-Showing-via-Python-Excel
 =========================================
 
---IPython Code for Automatic Processing T Data of ORT eSSD-------------
+--IPython Code for Automatic Processing Data of ORT eSSD-------------
 
 --1: Iterate through all txt files and get data accordingly;
 
@@ -12,3 +12,11 @@ Nand-Performance-Showing-via-Python-Excel
 Mechanism: 
 
 --1: this API calls Openpyxl Module for interacting with Excel files( *.xls, *.xlsx) including reading, write, calculating, and diagram showing;
+
+update history
+
+Sept 17, 2014
+uploading Erase,Write,Read Analysis ver 2.py
+1: adding Tkinter, tkSimpleDialog modules for GUI interface;
+2: adding glob, OS module for automatic file iteration and selectiing;
+3: adding function to specify data source items and item lists in excel file.
