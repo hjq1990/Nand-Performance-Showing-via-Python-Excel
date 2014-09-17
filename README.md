@@ -9,10 +9,6 @@ Nand-Performance-Showing-via-Python-Excel
 
 --3: Max, Min, and Average data of Nand Performance are calculated and shown as a summary 
 
-Mechanism: 
-
---1: this API calls Openpyxl Module for interacting with Excel files( *.xls, *.xlsx) including reading, write, calculating, and diagram showing;
-
 update history
 
 Sept 17, 2014
