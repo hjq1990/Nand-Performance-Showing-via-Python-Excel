@@ -5,7 +5,7 @@
 --3: Max, Min, and Average data of Nand Performance are calculated and shown as a summary 
 
 
---By Jinqiang He,   August 17th, 2014
+--Updated By Jinqiang He,   Sept 17th, 2014
 
 '''
 from Tkinter import *
