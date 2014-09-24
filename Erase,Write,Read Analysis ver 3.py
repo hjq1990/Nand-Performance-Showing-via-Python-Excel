@@ -5,7 +5,7 @@
 --3: Max, Min, and Average data of Nand Performance are calculated and shown as a summary 
 
 
---By Jinqiang He,   September 23rd, 2014
+--By Jinqiang He,   August 17th, 2014
 
 '''
 from Tkinter import *
@@ -17,19 +17,17 @@ from openpyxl import Workbook
 
 
 def Erase(lines):
-    line= lines.replace('=',' ').replace('0x',' ').replace('h',' ').replace('(',' ').split()
     global Erase_num,file,erase_time
-   
-    if(line[6]!='0'):
-        
-        Erase_num=Erase_num+1
-    
-        ws0.cell(row =Erase_num +5, column = 1).value=file
-        ws0.cell(row =Erase_num +5, column = 2).value=line[1]   
-        ws0.cell(row =Erase_num +5, column = 3).value=float(line[6])
-        if(len(line)>9):
-            erase_time=1
-            ws0.cell(row =Erase_num +5, column = 4).value=float(line[10])
+    line=lines
+    #print line        
+    Erase_num=Erase_num+1
+
+    ws0.cell(row =Erase_num +5, column = 1).value=file
+    ws0.cell(row =Erase_num +5, column = 2).value=line[1]   
+    ws0.cell(row =Erase_num +5, column = 3).value=float(line[6])
+    if(len(line)>9):
+        erase_time=1
+        ws0.cell(row =Erase_num +5, column = 4).value=float(line[10])
         
 def FBC(lines):
     line= lines.replace('=',' ').replace('0x',' ').replace('h',' ').replace('(',' ').split()
@@ -40,10 +38,10 @@ def FBC(lines):
     ws3.cell(row = FBC_event+5, column = 3).value=float(line[2])
 
 def Program(lines):
-    global PL,PU,file
-    page=int(lines[10:12] ,16)
-    line= lines.replace('=',' ').replace('0x',' ').replace('h',' ').replace('(',' ').split()
-    #print 'program'
+    global PL,PU,file,err_num
+    page=int(lines[1] ,16)
+    
+    line=lines
     if(line[7]!='0'):
         
         if((page==0) or ((page % 2 !=0) and (page!=255))):
@@ -64,6 +62,7 @@ def Read(lines):
     global Read_num,file
     line= lines.replace('=',' ').replace('0x',' ').replace('h',' ').replace('(',' ').split()
     page=int(line[1][-2:],16)
+    #print line
     global RL, RU
     if((page==0) or ((page % 2 !=0) and (page!=255))):
         RL=RL+1
@@ -128,6 +127,12 @@ def init():
     ws.cell('B10').value='Read Low'
     ws.cell('B11').value='Read Up'  
     ws.cell('B12').value='FBC'
+    
+    ws.cell('B20').value='Error Event List'
+    ws.cell('B21').value='err_num'
+    ws.cell('C21').value='file'
+    ws.cell('D21').value='line number'
+    ws.cell('E21').value='err_item'
 
 def Cal():
     global FBC_event,PL,PU,RL,RU,Erase_num
@@ -217,7 +222,7 @@ def Summarize2():
    
              
 def main(): 
-    
+    err_num=0
     global excel_name,file
     
     root = Tk()
@@ -238,9 +243,21 @@ def main():
     for file in glob.glob("*.txt"):
         print "Processing File",file              
         f = open(file, 'r')    #open T.txx
+        line_num=0
         for line in f:
+            line_num=line_num+1
             if(line[32:44]=='Program Loop'):
-                Program(line)
+                lines=line.replace('=',' ').replace('0x',' ').replace('h',' ').replace('(',' ').split()
+                if(lines[4]=='E0'):
+                    Program(lines)
+                else:
+                    #print line
+                    err_num=err_num+1
+                    ws.cell(row = 21+err_num, column = 2).value=err_num
+                    ws.cell(row = 21+err_num, column = 3).value=file
+                    ws.cell(row = 21+err_num, column = 4).value=line_num
+                    ws.cell(row = 21+err_num, column = 5).value=line
+                    
                 continue
                 
             if(line[5:10]=='Total'):
@@ -248,13 +265,38 @@ def main():
                 continue
                 
             if ((line[2:7]=='Block') and (len(line)>20)):             
-                Erase(line)
+                
+                lines=line.replace('=',' ').replace('0x',' ').replace('h',' ').replace('(',' ').split()
+                if(lines[4]=='E0'):
+                    Erase(lines)
+                else:
+                    #print line
+                    err_num=err_num+1
+                    ws.cell(row = 21+err_num, column = 2).value=err_num
+                    ws.cell(row = 21+err_num, column = 3).value=file
+                    ws.cell(row = 21+err_num, column = 4).value=line_num
+                    ws.cell(row = 21+err_num, column = 5).value=line
                 continue
                 
             if ((line[0:4]=='Page') and (len(line)<40)) :
-                Read(line)
+                lines=line.replace('=',' ').replace('0x',' ').replace('h',' ').replace('(',' ').split()
+                if(lines[4]=='E1'):
+                    #print line
+                    err_num=err_num+1
+                    ws.cell(row = 21+err_num, column = 2).value=err_num
+                    ws.cell(row = 21+err_num, column = 3).value=file
+                    ws.cell(row = 21+err_num, column = 4).value=line_num
+                    ws.cell(row = 21+err_num, column = 5).value=line
+                else:
+                    Read(line)
                 continue
-       
+    if(err_num>0):
+        print "kind suggestion:"
+        print "Please further check some source data, some items may be wrong"
+        print "For details, please refer to sheet 0:Summary in the final excel file"
+        ws.cell('B16').value="kind suggestion:"
+        ws.cell('B17').value="Please further check source data, some files may contain wrong data. You need to correctify failure items or remove the file from this folder" 
+        ws.cell('B18').value="For details, please refer to below lines"    
     print '****************************************************'                         
     print "Congratulations!!!"
     print "Processing Finished, and data is saved as excel file as below:"
@@ -270,6 +312,8 @@ if __name__ == '__main__':
     excel_name=' '
     file=' '
     erase_time=0
+
+
     
 #------------------Excel WorkBook Initiation----------------------------------    
     wb=Workbook()
