@@ -39,8 +39,8 @@ def FBC(lines):
 
 def Program(lines):
     global PL,PU,file,err_num
-    page=int(lines[1] ,16)
-    
+    pages=int(lines[1] ,16)
+    page= pages % 256
     line=lines
     if(line[7]!='0'):
         
