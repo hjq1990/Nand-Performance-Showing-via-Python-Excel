@@ -1,9 +1,18 @@
+    #***********************************************************************************
+    #This API is for auto processing Vt loss data
+    #***********************************************************************************
+
 from Tkinter import *
 import tkSimpleDialog
 from tkFileDialog import *
 import glob
 import os
 from openpyxl import Workbook
+from openpyxl.drawing import Image
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
 
 def init():
     global row_shift,col_shift
@@ -34,8 +43,9 @@ def main():
     w.pack()
     root.mainloop()
     os.chdir(dirname)
+    
     for file in glob.glob("*.txt"):
-        
+        VT_num=-1
         file_num=file_num+1
         PG_num=-1
         line_num=0
@@ -58,19 +68,41 @@ def main():
                     PG[PG_num]=VT[line_num][0]         
                         
     #***********************************************************************************
-    #Checking head and tail, and write corresponding data into excel file
+    #  1: draw diagram and save to excel file
+    #  2: check head and tail, and write corresponding data into excel file
     #***********************************************************************************
    
             for i in range(0,PG_num+1):
+                VT_num=VT_num+1
                 HD=1
                 head=0
                 tail=0
+                VT1=np.array(VT)[i*122+3:i*122+122]
+                dia_name=file[:-4]+' page  '+PG[i]
+                
+                
+                fig=plt.figure(figsize=(4,2), dpi=100)
+                axes = fig.add_axes([0.2, 0.1, 0.8, 0.7])  # left, bottom, width, height (range 0 to 1)
+                
+                axes.plot(VT1[:,0],VT1[:,1],'r--')
+                axes.set_xlabel('Voltage')
+                axes.set_ylabel('Population')
+                axes.set_title(dia_name)
+                fig.savefig(dia_name+'.png',dpi=100)
+                                             
+                img = Image(dia_name+'.png')
+                
+                img.anchor(ws1.cell(row=1+10*VT_num,column=1+file_num*8))
+                ws1.add_image(img)
+                
+                
+                
                 for j in range(2,120): 
                     if (HD==1):
                         if (
-                            ((VT[i*122+j+1][1]<=10) and (VT[i*122+j][1]<=10) and (VT[i*122+j+2][1]>10) and (VT[i*122+j+3][1]>10) )
+                            ((VT[i*122+j+1][1]<=10) and (VT[i*122+j][1]<=10) and (VT[i*122+j+2][1]>=10) and (VT[i*122+j+4][1]>10) )
                             or 
-                            ((VT[i*122+j+1][1]<=10) and (VT[i*122+j+2][1]>10)and(VT[i*122+j+3][1]>10)and (VT[i*122+j+1][0]<1.0))
+                            ((VT[i*122+j+1][1]<=10) and (VT[i*122+j+2][1]>=10)and(VT[i*122+j+3][1]>10)and (VT[i*122+j+1][0]<1.0))
                             ):
                             head=head+1
                             print 'head',i*122+j+1,VT[i*122+j+1][0],VT[i*122+j+1][1]
@@ -121,7 +153,7 @@ if __name__ == '__main__':
     ws0 = wb.create_sheet()
     ws0.title="Vt Loss"
     ws1 = wb.create_sheet()
-    ws1.title="program"
+    ws1.title="Diagram"
     ws2 = wb.create_sheet()
     ws2.title="read"
     ws3 = wb.create_sheet()
