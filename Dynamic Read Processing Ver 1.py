@@ -1,46 +1,66 @@
-import xlsxwriter
-import math
+'''
+--IPython Code for Automatic Processing Dynamic Read Data of ORT eSSD-------------
+--1: Iterate through all txt files and get data accordingly;
+--2: Based on main functions {Erase(), FBC(),Program(),Read()...}, program process data and store into the same excel file;
+--3: Max, Min, and Average data of Nand Performance are calculated and shown as a summary 
+
+
+--By Jinqiang He,   August 17th, 2014
+
+'''
+
+from Tkinter import *
+import tkSimpleDialog
+from tkFileDialog import *
+import glob
+import os
+from openpyxl import Workbook
 from functools import partial
 
-def main():
-    workbook=xlsxwriter.Workbook('EOL_RD1.xlsx')
-    worksheet=workbook.add_worksheet('my sheet')
-    Max_Cycle=101
-    Max_Case=24
-    col_offset=1
-    row_offset=2
-    col_div=29
-    total=0
-    first=1000
-    D2 = [[0 for x in xrange(Max_Case)] for x in xrange(Max_Cycle)] 
-    D3 = [[0 for x in xrange(Max_Case)] for x in xrange(Max_Cycle)] 
-    
-    # Set up structure of the tables
-    bold = workbook.add_format({'bold': True})
+def init():
+    global Max_Cycle,FBC_event,  row_offset,col_offset
+
            
     for cycle in range(1,Max_Cycle+1):
-        worksheet.write(cycle+row_offset, col_offset, 'cycle  '+str(cycle*100-100)+'--'+str(cycle*100),bold) 
-        worksheet.write(cycle+row_offset, col_offset+col_div, 'cycle  '+str(cycle*100-100)+'--'+str(cycle*100),bold) 
+        print cycle+row_offset, col_offset
+        ws0.cell(row=cycle+row_offset, column =col_offset).value= 'cycle '+str(cycle*100-100)+'--cycle'+str(cycle*100)
+        ws0.cell(row=cycle+row_offset, column=col_offset+col_div).value= 'cycle  '+str(cycle*100-100)+'--'+str(cycle*100) 
         
     for case in range(1,Max_Case):
-        worksheet.write(row_offset,case+col_offset,'case  '+str(case),bold)
-        worksheet.write(row_offset,case+col_offset+col_div,'case  '+str(case),bold)  
+        ws0.cell(row=row_offset,column=case+col_offset).value='case  '+str(case)
+        ws0.cell(row=row_offset,column=case+col_offset+col_div).value='case  '+str(case)
         
-    worksheet.write(Max_Cycle+row_offset,col_offset,'Sum by case',bold)
-    worksheet.write(Max_Cycle+row_offset,col_offset+col_div,'Sum by case',bold)
+    ws0.cell(row=Max_Cycle+row_offset,column=col_offset).value='Sum by case'
+    ws0.cell(row=Max_Cycle+row_offset,column=col_offset+col_div).value='Sum by case'
     
-    worksheet.write(row_offset,Max_Case+col_offset,'Sum by cycle',bold)
-    worksheet.write(row_offset,Max_Case+col_div+col_offset,'Sum by cycle',bold)
-    
-    # calculate the number of Dynamic Read event based on Cycle and Case
+    ws0.cell(row=row_offset,column=Max_Case+col_offset).value='Sum by cycle'
+    ws0.cell(row=row_offset,column=Max_Case+col_div+col_offset).value='Sum by cycle'
+
+def main(): 
+    global excel_name,file,Max_Cycle
+    D2 = [[0 for x in xrange(Max_Case)] for x in xrange(Max_Cycle)] 
+    D3 = [[0 for x in xrange(Max_Case)] for x in xrange(Max_Cycle)] 
     bytes_per_line = 16
-    sn=[0 for x in xrange(Max_Case)]
-    sn1=[0 for x in xrange(Max_Case)]
-    sn2=[0 for x in xrange(Max_Case)]
-    s='WW06-EOL-FBC-LOTC1-HT-0'
-    for i in range(1,4):
-        sn[i]=str(i)+'.pat'
-        with open(sn[i], 'rb') as binary_file:
+    total=0
+    first=1000
+    root = Tk()
+    root.wm_title("Dynamic Read data")
+    
+    w = Label(root, text="Please select the folder for the Dynamic-Read data to be processed.") 
+   
+    dirname = askdirectory()
+    print "Selecting folder:",dirname
+    
+    fold=dirname.replace('/',' ').split()
+    excel_name=fold[len(fold)-1]+' Dynamic Read data.xlsx'
+    print "Please close this dialog by clicking X on the right-top"
+    
+    w.pack()
+    root.mainloop()
+    os.chdir(dirname)
+    for file in glob.glob("*.pat"):
+        print "Processing File",file              
+        with open(file, 'rb') as binary_file:
             for block in iter(partial(binary_file.read, bytes_per_line), ''):
                 s1=' '.join('{0:02x}'.format(ord(b)) for b in block)
                 if s1[6:8]=='d2':
@@ -51,6 +71,7 @@ def main():
                         first=cycle  
                     total=total+1       
                     case=int(s1[7],16)
+                    #print case
                     D2[cycle][case]=D2[cycle][case]+1
     
                 if s1[6:8]=='d3':
@@ -62,24 +83,50 @@ def main():
                         first=cycle  
                     total=total+1 
                     D3[cycle][case]=D2[cycle][case]+1
-                
+   
+    # Set up structure of the table                
     # write data into the 2D arrays      
     for cycle in range(1,Max_Cycle):
         for case in range(1,Max_Case):
-            worksheet.write(cycle+row_offset,case+col_offset,D2[cycle][case])
-            worksheet.write(cycle+row_offset,case+col_div+row_offset,D3[cycle][case])
-        
-            #for case in range(0,Max_Case):
-    #    worksheet.write(Max_Cycle+1,case+1,'=sum(
-         
-    
-        
-    #for j in range(0,20):
-    #    worksheet.write(row,j,s1[3*j:3*j+2])
-    #    row=row+1    
-    workbook.close()
+            ws0.cell(row=cycle+row_offset,column=case+col_offset).value=D2[cycle][case]
+            ws0.cell(row=cycle+row_offset,column=case+col_div+row_offset).value=D3[cycle][case]
+   
     print 'total=',total
     print 'first cycle=',first 
 
 if __name__ == '__main__':
+    Max_Cycle=101
+    Max_Case=36
+    col_offset=1
+    row_offset=2
+    col_div=40
+    total=0
+    first=1000
+    RL=0
+    RU=0
+    Erase_num=0
+    FBC_event=0;
+    Row_offset=4
+    PL=0
+    PU=0
+    excel_name=' '
+    file=' '
+    erase_time=0
+    
+#------------------Excel WorkBook Initiation----------------------------------    
+    wb=Workbook()
+    ws = wb.active
+    ws.title="Summary"
+    ws0 = wb.create_sheet()
+    ws0.title="Dynamic Read Event"
+
+    init()
+    print "This API is for auto processing Dynamic-Read data from pat files generated from CNE, and processed data will be saved in an excel file."
+    
+    print '****************************************************' 
+    print "Please select the folder for the Dynamic-Read data to be processed."
     main()
+    
+    wb.save(excel_name)
+    #Summarize()
+    
