@@ -1,18 +1,31 @@
 Nand-Performance-Showing-via-Python-Excel
 =========================================
 
---IPython Code for Automatic Processing Data of ORT eSSD-------------
+This API series are intended for automatic process of raw data (mainly txt, pat files) and show results via excel or intrinsic python interactive command window.
 
---1: Iterate through all txt files and get data accordingly;
+### Features:
+--1: Adding tk module  for user-friendly interface;
 
---2: Based on main functions {Erase(), FBC(),Program(),Read()...}, program process data and store into the same excel file;
+--2: Adding openpyxl module for saving processed data into excel file; 
 
---3: Max, Min, and Average data of Nand Performance are calculated and shown as a summary 
 
-update history
+###### API One: [Erase,Write,Read Analysis](https://github.com/hjq1990/Nand-Performance-Showing-via-Python-Excel/blob/master/Erase%2CWrite%2CRead%20Analysis%20ver%203.py)
+Module used:glob, os, openpyxl, Tkinter;
 
-Sept 17, 2014
-uploading Erase,Write,Read Analysis ver 2.py
-1: adding Tkinter, tkSimpleDialog modules for GUI interface;
-2: adding glob, OS module for automatic file iteration and selectiing;
-3: adding function to specify data source items and item lists in excel file.
+Function:iterate in specified folder, process all txt files, and save result into excel files;   
+
+Feature: warning mechanism for data errors;
+
+
+######  API Two: [Dynamic Read Processing](https://github.com/hjq1990/Nand-Performance-Showing-via-Python-Excel/blob/master/Dynamic%20Read%20Processing%20Ver%201.py)
+Module used: functools, openpyxl, math
+
+Function: iterate in specified folder, process all pat files, and save result into excel files; 
+Feature: 
+
+######  API Three: [Bit Map Check From Memory](https://github.com/hjq1990/Nand-Performance-Showing-via-Python-Excel/blob/master/Bit%20Map%20Check%20From%20Memory)
+Module used: openpyxl
+
+Function: reads bit map of memory and show bad blocks
+
+
