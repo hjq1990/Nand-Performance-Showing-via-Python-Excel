@@ -70,17 +70,23 @@ elif(TYPE==2):
 elif(TYPE==4):
     BLOCK_BIT_MAP_START='0x8007830c'
     BB_MAP_BLOCK_BYTES='0x218 '
-    
-line=-1
+
+line_pre=-1    
 die=0
 bb_count=0
 with open(filename) as f:
   for lines in f:
-      line=line+1
+      
       if (len(lines)>20):
-          
+        start="0x"+lines[0:8]
+        line=(int(start, 16)-int(BLOCK_BIT_MAP_START,16))/32
+        if (line - line_pre!=1):
+          print "warning, missing data here at "+line[0:8]
+
         line_hex=str(lines[10:-37].replace(' ','').replace('_',''))
         line_bin=bin(int(line_hex, HDB)).zfill(Bytes_Per_line*Base)
+        print line,line_pre
+        line_pre=line
        
       for i in range(0,32):
           for j in range(0,8):
