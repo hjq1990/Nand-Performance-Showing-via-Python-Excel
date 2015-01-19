@@ -9,7 +9,7 @@ This API series are intended for automatic process of raw data (mainly txt, pat 
 --2: Adding openpyxl module for saving processed data into excel file; 
 
 
-###### API One: [Erase,Write,Read Analysis](https://github.com/hjq1990/Nand-Performance-Showing-via-Python-Excel/blob/master/Erase%2CWrite%2CRead%20Analysis%20ver%203.py)
+###### API One: [Erase,Write,Read Analysis](https://github.com/jinstrong/Nand-Performance-Showing-via-Python-Excel/blob/master/Erase%2CWrite%2CRead%20Analysis.py)
 Module used:glob, os, openpyxl, Tkinter;
 
 Function:iterate in specified folder, process all txt files, and save result into excel files;   
