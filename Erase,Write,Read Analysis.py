@@ -90,9 +90,10 @@ def Erase3(lines):
         
 def FBC3(line):
     global FBC_event,file
-    FBC_event=FBC_event+1
-    ws3.cell(row = FBC_event+5, column = 1).value=file
-    ws3.cell(row = FBC_event+5, column = 3).value=float(line[3])
+    if(line[2]!='Skip'):
+	FBC_event=FBC_event+1
+	ws3.cell(row = FBC_event+5, column = 1).value=file
+	ws3.cell(row = FBC_event+5, column = 3).value=float(line[3])
 
 def Program3(lines):
     global PL,PM,PU,file,err_num
@@ -126,7 +127,6 @@ def Program3(lines):
 def Read3(line):
     global Read_num,file,read_page
     global RL,RM,RU
-    print line
     if(read_page==0):
         RL=RL+1
         ws2.cell(row = RL+5, column = 1).value=file
