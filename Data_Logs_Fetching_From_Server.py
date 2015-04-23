@@ -41,7 +41,7 @@ def main():
                 if Lot_Number in name:
                     files_found=files_found+1
                     full_path=str(os.path.join(root,name)).replace('\\','//')
-                    print full_path
+                    print 'data log',full_path,'will be copied to dist folder'
                     shutil.copy(full_path,newpath)
                     # print 'root=',root,'dirs=',dirs,'name=',name
                     # print root+'//'+name
