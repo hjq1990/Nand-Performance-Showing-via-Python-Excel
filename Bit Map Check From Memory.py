@@ -34,7 +34,7 @@ print "The bit map file should be in below format:"
 print "1: number in Hex mode, each line contains 32 number, and number in Byte form"
 
 print "please select the config of product you are testing"
-print '''Product Config Type: 0----1Y Ex2 2P 8K,  1----1Y Ex3 1P,  2-------1Y Ex3 2P,  3---------1Y Ex2 4P 16K
+print '''Product Config Type: 0----1Y Ex2 2P 8K,  1----1Y Ex3 1P,  2-------1Y Ex3 2P,  4---------1Y Ex2 4P 16K
 if (TYPE==0)://
     BLOCK_BIT_MAP_START='0x8007830c'
     BB_MAP_BLOCK_BYTES='0x10c '
