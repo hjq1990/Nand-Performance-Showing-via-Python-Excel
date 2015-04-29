@@ -14,11 +14,20 @@ import shutil
 
 def main():
 
-    Dept_test="//cvpfilip05//Dept_test"
-    magnum_summary_2="//cvpfilip03//SDSS_Prod_Data//MemoryTestData//magnum_summary_2"
-    Magnum_Compressed="//cvpfilip05//Dept_test//Magnum_Compressed"
+    fold_dict={'a':"//cvpfilip05//Dept_test",'b':"//cvpfilip03//SDSS_Prod_Data//MemoryTestData//magnum_summary_2"}
 
     Lot_Number=raw_input("lot number:")
+
+    print "Currently, software will automatically search datalogs within below folders"
+    for item in fold_dict.keys():
+        print fold_dict.keys(),"  :  ",fold_dict.values()
+
+    print "Enter 'add' if you want to add another folder"
+    print "Enter 'del' if you want to delete one folder"
+    print "Enter 'search' if you want to start searching"
+    inputs=raw_input("Enter your selection")
+    while not "search":
+        if
 
     dst1 ='C:\Auto Uploading\Auto uploading\hjq\ort\AQL'
     dst=str(dst1).replace('\\','//')
@@ -33,10 +42,8 @@ def main():
     files_found=0
     for folders in Log_folder:
         print 'searching within this folder:',folders
-        for root, dirs, files in os.walk(Log_folder):
+        for root, dirs, files in os.walk(folders):
             for name in files:
-                if (files_found>=3):
-                    return files_found
                 fileName, fileExtension = os.path.splitext(name)
                 if Lot_Number in name:
                     files_found=files_found+1
