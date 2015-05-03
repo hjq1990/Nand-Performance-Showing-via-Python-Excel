@@ -19,20 +19,17 @@ def main():
     Lot_Number=raw_input("lot number:")
 
     print "Currently, software will automatically search datalogs within below folders"
-    for item in fold_dict.keys():
-        print fold_dict.keys(),"  :  ",fold_dict.values()
+    print fold_dict
 
     print "Enter 'add' if you want to add another folder"
     print "Enter 'del' if you want to delete one folder"
     print "Enter 'search' if you want to start searching"
     inputs=raw_input("Enter your selection")
-    while not "search":
-        if
+    # while not "search":
+    #     if
 
     dst1 ='C:\Auto Uploading\Auto uploading\hjq\ort\AQL'
     dst=str(dst1).replace('\\','//')
-
-    Log_folder=[Dept_test,magnum_summary_2]
 
     newpath = dst+'\\'+str(Lot_Number)
     print 'data logs will be copied to this folder:',newpath
@@ -40,7 +37,7 @@ def main():
         os.makedirs(newpath)
 
     files_found=0
-    for folders in Log_folder:
+    for folders in fold_dict.values():
         print 'searching within this folder:',folders
         for root, dirs, files in os.walk(folders):
             for name in files:

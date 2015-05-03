@@ -18,7 +18,7 @@ Bytes_Per_line=32
 BB = [0 for x in xrange(50)]
 strr=[0 for x in xrange(10000)]
 
-TYPE=0  #  0----1Y Ex2 2P 8K,  1----1Y Ex3 1P,  2-------1Y Ex3 2P,  3---------1Y Ex2 4P 16K
+TYPE=0  #  0----1Y Ex2 2P 8K,  1----1Y Ex3 1P,  2-------1Y Ex3 2P,  4---------1Y Ex2 4P 16K
 
 print '''
 *****************************************
