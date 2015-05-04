@@ -23,6 +23,8 @@ def get_path(wildcard):
     dialog.Destroy()
     return path
 
+#------------------Excel WorkBook Initiation----------------------------------    
+
 def init():
     ws0.merge_cells('A2:D2')
     ws0.cell('A2').value='Error Log Stamp'
@@ -62,7 +64,6 @@ def init():
     ws0.merge_cells('AQ2:AR2')
     ws0.cell('AQ2').value='sector 8'
 
-
     ws1.cell('A2').value="Error No."
     ws1.cell('B2').value="Page Status"
     ws1.cell('C2').value="Cycle"
@@ -82,8 +83,8 @@ def init():
     ws1.cell('P2').value='sector 7'
 
 def main():
-    errs='NO_LOG NO_LOG_ERASE MACRO_ERASE MACRO_PROGRAM MACRO_READ LOWER_PAGE_PROGRAM_FAIL UPPER_PAGE_PROGRAM_FAIL_WITH_LOWER_CORRUPTED UPPER_PAGE_PROGRAM_FAIL UPPER_PAGE_PROGRAM_FAIL_WITH_OTHERWL_CORRUPTED DYN_RD_SUCCESS_OTHERWL_CORRUPTED LOWER_PAGE_PROGRAM_FAIL_WITH_OTHERWL_CORRUPTED SLC_PROGRAM_FAIL UNC_ECC SLC_DYN_RD_FAIL DYN_RD_CASE_WITH_DLA_ON_FAIL DYN_RD_FAIL GrownBB  FIM_BUS_MODE_DET_ERROR'
-    labels='0xEF 0xEE 0x1 0x2 0x3 0x4 0x5 0x6 0x7 0x8 0x9 0xA 0xA 0xB 0xC 0x0D 0xE 0xF'
+    errs='NO_LOG NO_LOG_ERASE MACRO_ERASE MACRO_PROGRAM MACRO_READ LOWER_PAGE_PROGRAM_FAIL UPPER_PAGE_PROGRAM_FAIL_WITH_LOWER_CORRUPTED UPPER_PAGE_PROGRAM_FAIL UPPER_PAGE_PROGRAM_FAIL_WITH_OTHERWL_CORRUPTED DYN_RD_SUCCESS_OTHERWL_CORRUPTED LOWER_PAGE_PROGRAM_FAIL_WITH_OTHERWL_CORRUPTED SLC_PROGRAM_FAIL UNC_ECC SLC_DYN_RD_FAIL DYN_RD_CASE_WITH_DLA_ON_FAIL DYN_RD_FAIL GrownBB  FIM_BUS_MODE_DET_ERROR Plane_interleave_Failure'
+    labels='0xEF 0xEE 0x1 0x2 0x3 0x4 0x5 0x6 0x7 0x8 0x9 0xA 0xA 0xB 0xC 0x0D 0xE 0xF 0xD1'
     err_seq=errs.split()
     label_seq=labels.split()
     nvs=zip(label_seq,err_seq)
@@ -139,7 +140,7 @@ def main():
             s1=' '.join('{0:02x}'.format(ord(b)) for b in block)
             line_num=line_num+1
             ws.cell(row=line_num,column=1).value=s1
-
+            print s1
             if (s1[0:11]=='45 72 4c 67'):
                 err_num=err_num+1
                 column_offset=0
@@ -150,15 +151,12 @@ def main():
                 Page=int((s1[18*3:18*3+2]),16)
                 Phy_Die=CE*CE_co+Die*Die_co
 
-                # add_add=str(address)
-                # inputs="CH:"+s1[13*3:13*3+2]+"Page:"+add_add
-
                 ws1.cell(row=err_num+2,column=column_offset+1).value=int(s1[5*3:5*3+2]+s1[4*3:4*3+2],16)
                 ws1.cell(row=err_num+2,column=column_offset+2).value='NA'
                 ws1.cell(row=err_num+2,column=column_offset+3).value=int(s1[11*3:11*3+2]+s1[10*3:10*3+2]+s1[9*3:9*3+2]+s1[8*3:8*3+2],16)
                 ws1.cell(row=err_num+2,column=column_offset+4).value=Err_Dict[int(s1[3*12:3*12+2],16)]
                 ws1.cell(row=err_num+2,column=column_offset+5).value=FIM
-                ws1.cell(row=err_num+2,column=column_offset+6).value=blk
+                ws1.cell(row=err_num+2,column=column_offset+6).value=Phy_Die*0x2000+hex(blk)
                 ws1.cell(row=err_num+2,column=column_offset+7).value=Page
 
                 # ws1.cell('C2').value=int(s1[6*3:6*3+2],16)+int(s1[])
@@ -182,32 +180,18 @@ def main():
                 str.append(item)
 
 if __name__ == '__main__':
-    error_num=0
-    Max_Case=36
-    col_offset=1
-    row_offset=2
-    col_div=40
-    total=0
-    first=1000
-    RL=0
-    RU=0
-    Erase_num=0
-    FBC_event=0;
-    Row_offset=4
-    PL=0
-    PU=0
     excel_name=' '
     file=' '
-    erase_time=0
     
-#------------------Excel WorkBook Initiation----------------------------------    
-
-
     print "This API is for auto processing error-log data within pat files generated from CNE, and processed data will be saved in an excel file."
     print "Current Version only supports Raw Nand LGA60, will add support for other products gradually"
     print "by Jinqiang May 4th, 2015"
     print '****************************************************' 
     print ' '
+#------------------Excel WorkBook Initiation----------------------------------    
+
+
+
     wb=Workbook()
     ws = wb.active
 
