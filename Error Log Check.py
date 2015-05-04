@@ -24,18 +24,12 @@ def get_path(wildcard):
     return path
 
 def init():
-    ws0.merge_cells('A2')
+    ws0.merge_cells('A2:D2')
     ws0.cell('A2').value='Error Log Stamp'
-
-    ws0.merge_cells('B2:C2')
-    ws0.cell('B2').value='Error Number(Hex)'
-    ws0.merge_cells('D2')
-    ws0.cell('B2').value='Error Number(Dec)'
-
     ws0.merge_cells('E2:F2')
-    ws0.cell('E2').value=''
+    ws0.cell('E2').value='Error Number(Hex)'
     ws0.merge_cells('G2:H2')
-    ws0.cell('G2').value='Error Type'
+    ws0.cell('G2').value='Page Status'
     ws0.merge_cells('I2:L2')
     ws0.cell('I2').value='Cycle'
     ws0.cell('M2').value='Error Code'
@@ -70,22 +64,31 @@ def init():
 
 
     ws1.cell('A2').value="Error No."
-    ws1.cell('B2').value="Error Type"
+    ws1.cell('B2').value="Page Status"
     ws1.cell('C2').value="Cycle"
     ws1.cell('D2').value="Failure Type"
     ws1.cell('E2').value="Channel/FIM"
     ws1.cell('F2').value="Physical blk"
     ws1.cell('G2').value="Page"
 
+    ws1.cell('H2').value='Failed Bit Per Sector'
+    ws1.cell('I2').value='sector 0'
+    ws1.cell('J2').value='sector 1'
+    ws1.cell('K2').value='sector 2'
+    ws1.cell('L2').value='sector 3'
+    ws1.cell('M2').value='sector 4'
+    ws1.cell('N2').value='sector 5'
+    ws1.cell('O2').value='sector 6'
+    ws1.cell('P2').value='sector 7'
 
 def main():
-    errs='NO_LOG NO_LOG_ERASE MACRO_ERASE MACRO_PROGRAM MACRO_READ LOWER_PAGE_PROGRAM_FAIL UPPER_PAGE_PROGRAM_FAIL_WITH_LOWER_CORRUPTED UPPER_PAGE_PROGRAM_FAIL UPPER_PAGE_PROGRAM_FAIL_WITH_OTHERWL_CORRUPTED DYN_RD_SUCCESS_OTHERWL_CORRUPTED LOWER_PAGE_PROGRAM_FAIL_WITH_OTHERWL_CORRUPTED SLC_PROGRAM_FAIL UNC_ECC SLC_DYN_RD_FAIL DYN_RD_CASE_WITH_DLA_ON_FAIL DYN_RD_FAIL GrownBB'
-    labels='0xEF 0xE 0x1 0x2 0x3 0x4 0x5 0x6 0x7 0x8 0x9 0xA 0xA 0xB 0xC 0x0D 0xE'
+    errs='NO_LOG NO_LOG_ERASE MACRO_ERASE MACRO_PROGRAM MACRO_READ LOWER_PAGE_PROGRAM_FAIL UPPER_PAGE_PROGRAM_FAIL_WITH_LOWER_CORRUPTED UPPER_PAGE_PROGRAM_FAIL UPPER_PAGE_PROGRAM_FAIL_WITH_OTHERWL_CORRUPTED DYN_RD_SUCCESS_OTHERWL_CORRUPTED LOWER_PAGE_PROGRAM_FAIL_WITH_OTHERWL_CORRUPTED SLC_PROGRAM_FAIL UNC_ECC SLC_DYN_RD_FAIL DYN_RD_CASE_WITH_DLA_ON_FAIL DYN_RD_FAIL GrownBB  FIM_BUS_MODE_DET_ERROR'
+    labels='0xEF 0xEE 0x1 0x2 0x3 0x4 0x5 0x6 0x7 0x8 0x9 0xA 0xA 0xB 0xC 0x0D 0xE 0xF'
     err_seq=errs.split()
     label_seq=labels.split()
     nvs=zip(label_seq,err_seq)
     Err_Dict=dict((int(err,16),label) for err,label in nvs)
-    print Err_Dict
+
     global excel_name,file,Max_Cycle
     str=[]
     bytes_per_line = 20
@@ -149,17 +152,31 @@ def main():
 
                 # add_add=str(address)
                 # inputs="CH:"+s1[13*3:13*3+2]+"Page:"+add_add
-                ws1.cell('A2').value=int(s1[5*3:5*3+2]+s1[4*3:4*3+2],16)
-                ws1.cell('B2').value=' '
+
+                ws1.cell(row=err_num+2,column=column_offset+1).value=int(s1[5*3:5*3+2]+s1[4*3:4*3+2],16)
+                ws1.cell(row=err_num+2,column=column_offset+2).value='NA'
+                ws1.cell(row=err_num+2,column=column_offset+3).value=int(s1[11*3:11*3+2]+s1[10*3:10*3+2]+s1[9*3:9*3+2]+s1[8*3:8*3+2],16)
+                ws1.cell(row=err_num+2,column=column_offset+4).value=Err_Dict[int(s1[3*12:3*12+2],16)]
+                ws1.cell(row=err_num+2,column=column_offset+5).value=FIM
+                ws1.cell(row=err_num+2,column=column_offset+6).value=blk
+                ws1.cell(row=err_num+2,column=column_offset+7).value=Page
+
                 # ws1.cell('C2').value=int(s1[6*3:6*3+2],16)+int(s1[])
             elif(s1[0:11]=='52 64 45 72'):
                 column_offset=24
+                ws1.cell(row=err_num+2,column=8+1).value=int(s1[5*3:5*3+2]+s1[4*3:4*3+2],16)
+                ws1.cell(row=err_num+2,column=9+1).value=int(s1[7*3:7*3+2]+s1[6*3:6*3+2],16)
+                ws1.cell(row=err_num+2,column=10+1).value=int(s1[9*3:9*3+2]+s1[8*3:8*3+2],16)
+                ws1.cell(row=err_num+2,column=11+1).value=int(s1[11*3:11*3+2]+s1[10*3:10*3+2],16)
+                ws1.cell(row=err_num+2,column=12+1).value=int(s1[13*3:13*3+2]+s1[12*3:12*3+2],16)
+                ws1.cell(row=err_num+2,column=13+1).value=int(s1[15*3:15*3+2]+s1[14*3:14*3+2],16)
+                ws1.cell(row=err_num+2,column=14+1).value=int(s1[17*3:17*3+2]+s1[16*3:16*3+2],16)
+                ws1.cell(row=err_num+2,column=15+1).value=int(s1[19*3:19*3+2]+s1[18*3:18*3+2],16)
 
             for i in range(20):
                 ws0.cell(row=err_num+2,column=column_offset+i+1).value=s1[3*i:3*i+2]
             if (column_offset==0):
-                print int(s1[3*12:3*12+2],16)
-                ws0.cell(row=err_num+2,column=column_offset+12+1).value=s1[3*12:3*12+2]+Err_Dict[int(s1[3*12:3*12+2],16)]
+                ws0.cell(row=err_num+2,column=column_offset+12+1).value=s1[3*12:3*12+2]
 
             for item in s1:
                 str.append(item)
@@ -187,11 +204,10 @@ if __name__ == '__main__':
 
 
     print "This API is for auto processing error-log data within pat files generated from CNE, and processed data will be saved in an excel file."
-    print "Current Version only supports Raw Nand LGA60, will add support gradually"
-    print "by Jinqiang May 3rd, 2015"
-    print ' '
+    print "Current Version only supports Raw Nand LGA60, will add support for other products gradually"
+    print "by Jinqiang May 4th, 2015"
     print '****************************************************' 
-
+    print ' '
     wb=Workbook()
     ws = wb.active
 
@@ -203,4 +219,4 @@ if __name__ == '__main__':
     init()
     main()
     wb.save(excel_name)
-    print "The processed data is saved as",excel_name
+    print "The processed Error Log Summary is saved as",excel_name
