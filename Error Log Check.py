@@ -103,8 +103,10 @@ def main():
     FIM_co=0
     CE_co=0
     Die_co=0
+    blks_Per_Die=0x0
 
     if (Tech=='2'):
+        blks_Per_Die=0x1000
         if(die_stack=='2'):
             FIM_co=1
             CE_co=1
@@ -116,6 +118,7 @@ def main():
         else:
             print "wrong Die Stack"
     elif(Tech=='4'):
+        blks_Per_Die=0x2000
         if(die_stack=='8'):
             FIM_co=1
             CE_co=1
@@ -140,7 +143,7 @@ def main():
             s1=' '.join('{0:02x}'.format(ord(b)) for b in block)
             line_num=line_num+1
             ws.cell(row=line_num,column=1).value=s1
-            print s1
+
             if (s1[0:11]=='45 72 4c 67'):
                 err_num=err_num+1
                 column_offset=0
@@ -156,7 +159,7 @@ def main():
                 ws1.cell(row=err_num+2,column=column_offset+3).value=int(s1[11*3:11*3+2]+s1[10*3:10*3+2]+s1[9*3:9*3+2]+s1[8*3:8*3+2],16)
                 ws1.cell(row=err_num+2,column=column_offset+4).value=Err_Dict[int(s1[3*12:3*12+2],16)]
                 ws1.cell(row=err_num+2,column=column_offset+5).value=FIM
-                ws1.cell(row=err_num+2,column=column_offset+6).value=Phy_Die*0x2000+hex(blk)
+                ws1.cell(row=err_num+2,column=column_offset+6).value=hex(Phy_Die*blks_Per_Die+blk)
                 ws1.cell(row=err_num+2,column=column_offset+7).value=Page
 
                 # ws1.cell('C2').value=int(s1[6*3:6*3+2],16)+int(s1[])
@@ -188,13 +191,10 @@ if __name__ == '__main__':
     print "by Jinqiang May 4th, 2015"
     print '****************************************************' 
     print ' '
-#------------------Excel WorkBook Initiation----------------------------------    
 
-
-
+#------------------Excel WorkBook Initiation----------------------------------
     wb=Workbook()
     ws = wb.active
-
     ws.title="Raw Data"
     ws0 = wb.create_sheet()
     ws0.title="Error Log Raw"
