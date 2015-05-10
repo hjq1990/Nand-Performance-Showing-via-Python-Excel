@@ -4,9 +4,13 @@ Nand-Performance-Showing-via-Python-Excel
 This API series are intended for automatic process of raw data (mainly txt, pat files) and show results via excel or intrinsic python interactive command window.
 
 ### Features:
---1: Adding tk module  for user-friendly interface;
+--1: Adding Tkinter/wxpython module  for user-friendly interface;
 
 --2: Adding openpyxl module for saving processed data into excel file; 
+
+--3: Adding os, glob. shutil module for file system operation;
+
+--4: Adding functools for binary file operation;
 
 
 ###### API One: [Erase,Write,Read Analysis](https://github.com/jinstrong/Nand-Performance-Showing-via-Python-Excel/blob/master/Erase%2CWrite%2CRead%20Analysis.py)
@@ -28,4 +32,14 @@ Module used: openpyxl
 
 Function: reads bit map of memory and show bad blocks
 
+
+######  API Four: [Error Log Check](https://github.com/jinstrong/Nand-Performance-Showing-via-Python-Excel/blob/master/Error%20Log%20Check.py)
+Module used: openpyxl, wx, glob, os, functools
+
+Function: read binary file of error log, process, and save to excel file
+
+
+######  API Five: [Data_Logs_Fetching_From_Server](https://github.com/jinstrong/Nand-Performance-Showing-via-Python-Excel/blob/master/Data_Logs_Fetching_From_Server.py)
+Module used: os, shutil
+Function: search within shared folder for test datalogs and save to specified dist when found
 
