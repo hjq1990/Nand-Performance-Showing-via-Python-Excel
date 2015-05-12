@@ -160,7 +160,7 @@ def main():
                 ws1.cell(row=err_num+2,column=column_offset+4).value=Err_Dict[int(s1[3*12:3*12+2],16)]
                 ws1.cell(row=err_num+2,column=column_offset+5).value=FIM
                 ws1.cell(row=err_num+2,column=column_offset+6).value=hex(Phy_Die*blks_Per_Die+blk)
-                ws1.cell(row=err_num+2,column=column_offset+7).value=Page
+                ws1.cell(row=err_num+2,column=column_offset+7).value=hex(Page)
 
                 # ws1.cell('C2').value=int(s1[6*3:6*3+2],16)+int(s1[])
             elif(s1[0:11]=='52 64 45 72'):
