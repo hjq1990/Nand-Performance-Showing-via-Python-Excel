@@ -66,9 +66,8 @@ def main():
                 print "DUT number",i,"POR OK"
                 strr_num=strr_num+1
                 strr[strr_num]="DUT number :"+str(i)+" : POR OK"
-
     with open(result_name,'w') as result:
-        for i in range(1,strr_num):
+        for i in range(1,strr_num+2):
             a=str(strr[i])
             result.write(a+'\n')
     print "the result is saved into as below file:"
