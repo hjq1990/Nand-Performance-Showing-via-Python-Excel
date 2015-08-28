@@ -16,10 +16,8 @@ def get_path(wildcard):
 
 def main():
     folder_path =get_path('*.txt')
-    stamp_data=[0 for  i in xrange(1000000)]
+    stamp_data = [0 for i in xrange(1000000)]
     stamp_num=0
-
-
     with open(folder_path, 'r') as fl:
         lines = fl.read().splitlines()
 
