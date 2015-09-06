@@ -77,14 +77,14 @@ def init():
     ws1.cell(row=ws1_row, column=ws1_col + 6).value = "Page Number"
     ws1.cell(row=ws1_row, column=ws1_col + 7).value = "Page Type"
 
-    ws1.cell(row=ws1_row, column=ws1_col + 8).value = 'sector 0'
-    ws1.cell(row=ws1_row, column=ws1_col + 9).value = 'sector 1'
-    ws1.cell(row=ws1_row, column=ws1_col + 10).value = 'sector 2'
-    ws1.cell(row=ws1_row, column=ws1_col + 11).value = 'sector 3'
-    ws1.cell(row=ws1_row, column=ws1_col + 12).value = 'sector 4'
-    ws1.cell(row=ws1_row, column=ws1_col + 13).value = 'sector 5'
-    ws1.cell(row=ws1_row, column=ws1_col + 14).value = 'sector 6'
-    ws1.cell(row=ws1_row, column=ws1_col + 15).value = 'sector 7'
+    # ws1.cell(row=ws1_row, column=ws1_col + 8).value = 'sector 0'
+    # ws1.cell(row=ws1_row, column=ws1_col + 9).value = 'sector 1'
+    # ws1.cell(row=ws1_row, column=ws1_col + 10).value = 'sector 2'
+    # ws1.cell(row=ws1_row, column=ws1_col + 11).value = 'sector 3'
+    # ws1.cell(row=ws1_row, column=ws1_col + 12).value = 'sector 4'
+    # ws1.cell(row=ws1_row, column=ws1_col + 13).value = 'sector 5'
+    # ws1.cell(row=ws1_row, column=ws1_col + 14).value = 'sector 6'
+    # ws1.cell(row=ws1_row, column=ws1_col + 15).value = 'sector 7'
 
 
 def main():
@@ -159,13 +159,19 @@ def main():
 
     print "Processing File", filename
     excel_name = os.path.dirname(
-        filename) + '/' + os.path.basename(filename)[:-4] + '--error log.xlsx'
+        filename) + '/' + os.path.basename(filename)[:-4] + '--error log-new.xlsx'
     with open(filename, 'rb') as binary_file:
         for block in iter(partial(binary_file.read, bytes_per_line), ''):
             s1 = ' '.join('{0:02x}'.format(ord(b)) for b in block)
             line_num = line_num + 1
             ws.cell(row=line_num, column=1).value = s1
-            if (s1[0:11] == '45 72 4c 67'):
+            binary = lambda x: " ".join(reversed(
+                [i + j for i, j in zip(*[["{0:04b}".format(int(c, 16)) for c in reversed("0" + x)][n::2] for n in [1, 0]])]))
+            # https://joernhees.de/blog/2010/09/21/how-to-convert-hex-strings-to-binary-ascii-strings-in-python-incl-8bit-space/
+            Erlog = '45 72 4c 67'.replace(' ', '')
+            sum(c1 != c2 for c1, c2 in zip(
+                binary(Erlog), binary(s1[0:11].replace(' ', ''))))
+            if (sum < 2):
                 err_num = int(s1[4 * 3:4 * 3 + 2], 16) + \
                     int(s1[5 * 3:5 * 3 + 2], 16) * 0x100
                 status_type = s1[6 * 3:6 * 3 + 2]
@@ -213,22 +219,23 @@ def main():
 
             elif(s1[0:11] == '52 64 45 72'):
                 column_offset = 25
-                ws1.cell(row=err_num + 2, column=8 +
-                         1).value = int(s1[5 * 3:5 * 3 + 2] + s1[4 * 3:4 * 3 + 2], 16)
-                ws1.cell(row=err_num + 2, column=9 +
-                         1).value = int(s1[7 * 3:7 * 3 + 2] + s1[6 * 3:6 * 3 + 2], 16)
-                ws1.cell(row=err_num + 2, column=10 +
-                         1).value = int(s1[9 * 3:9 * 3 + 2] + s1[8 * 3:8 * 3 + 2], 16)
-                ws1.cell(row=err_num + 2, column=11 +
-                         1).value = int(s1[11 * 3:11 * 3 + 2] + s1[10 * 3:10 * 3 + 2], 16)
-                ws1.cell(row=err_num + 2, column=12 +
-                         1).value = int(s1[13 * 3:13 * 3 + 2] + s1[12 * 3:12 * 3 + 2], 16)
-                ws1.cell(row=err_num + 2, column=13 +
-                         1).value = int(s1[15 * 3:15 * 3 + 2] + s1[14 * 3:14 * 3 + 2], 16)
-                ws1.cell(row=err_num + 2, column=14 +
-                         1).value = int(s1[17 * 3:17 * 3 + 2] + s1[16 * 3:16 * 3 + 2], 16)
-                ws1.cell(row=err_num + 2, column=15 +
-                         1).value = int(s1[19 * 3:19 * 3 + 2] + s1[18 * 3:18 * 3 + 2], 16)
+                # ws1.cell(row=err_num + 2, column=8 +
+                #          1).value = int(s1[5 * 3:5 * 3 + 2] + s1[4 * 3:4 * 3 + 2], 16)
+                # ws1.cell(row=err_num + 2, column=9 +
+                #          1).value = int(s1[7 * 3:7 * 3 + 2] + s1[6 * 3:6 * 3 + 2], 16)
+                # ws1.cell(row=err_num + 2, column=10 +
+                #          1).value = int(s1[9 * 3:9 * 3 + 2] + s1[8 * 3:8 * 3 + 2], 16)
+                # ws1.cell(row=err_num + 2, column=11 +
+                #          1).value = int(s1[11 * 3:11 * 3 + 2] + s1[10 * 3:10 * 3 + 2], 16)
+                # ws1.cell(row=err_num + 2, column=12 +
+                #          1).value = int(s1[13 * 3:13 * 3 + 2] + s1[12 * 3:12 * 3 + 2], 16)
+                # ws1.cell(row=err_num + 2, column=13 +
+                #          1).value = int(s1[15 * 3:15 * 3 + 2] + s1[14 * 3:14 * 3 + 2], 16)
+                # ws1.cell(row=err_num + 2, column=14 +
+                #          1).value = int(s1[17 * 3:17 * 3 + 2] + s1[16 * 3:16 * 3 + 2], 16)
+                # ws1.cell(row=err_num + 2, column=15 +
+                # 1).value = int(s1[19 * 3:19 * 3 + 2] + s1[18 * 3:18 * 3 + 2],
+                # 16)
 
             for i in range(20):
                 ws0.cell(

@@ -26,11 +26,11 @@ def main():
             splits = line.split(',')
 
             # if splits[9] == '':
-                # if int(splits[11], 10) > 10:
-                #     print line
-            if splits[9]=='3' or splits[9]=='2':
+            # if int(splits[11], 10) > 10:
+            #     print line
+            if splits[9] == '3' or splits[9] == '2':
 
-                if int(splits[11],10)>100:
+                if int(splits[11], 10) > 100:
                     print line
 
 if __name__ == '__main__':
