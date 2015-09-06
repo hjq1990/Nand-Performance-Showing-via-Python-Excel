@@ -161,6 +161,7 @@ def main():
     excel_name = os.path.dirname(
         filename) + '/' + os.path.basename(filename)[:-4] + '--error log-new.xlsx'
     with open(filename, 'rb') as binary_file:
+        err_num=0
         for block in iter(partial(binary_file.read, bytes_per_line), ''):
             s1 = ' '.join('{0:02x}'.format(ord(b)) for b in block)
             line_num = line_num + 1
@@ -169,18 +170,23 @@ def main():
                 [i + j for i, j in zip(*[["{0:04b}".format(int(c, 16)) for c in reversed("0" + x)][n::2] for n in [1, 0]])]))
             # https://joernhees.de/blog/2010/09/21/how-to-convert-hex-strings-to-binary-ascii-strings-in-python-incl-8bit-space/
             Erlog = '45 72 4c 67'.replace(' ', '')
-            sum(c1 != c2 for c1, c2 in zip(
+            BitFlip=sum(c1 != c2 for c1, c2 in zip(
                 binary(Erlog), binary(s1[0:11].replace(' ', ''))))
-            if (sum < 2):
-                err_num = int(s1[4 * 3:4 * 3 + 2], 16) + \
-                    int(s1[5 * 3:5 * 3 + 2], 16) * 0x100
+            column_offset = 1
+
+            if (BitFlip < 4):
+                err_num =err_num+1
+
                 status_type = s1[6 * 3:6 * 3 + 2]
                 column_offset = 1
-                cycle = int(s1[11 * 3:11 * 3 + 2], 16) * 0x1000000 + int(s1[10 * 3:10 * 3 + 2], 16) * \
-                    0x10000 + int(s1[9 * 3:9 * 3 + 2], 16) * \
-                    0x100 + int(s1[8 * 3:8 * 3 + 2], 16)
+                cycle = int(s1[9 * 3:9 * 3 + 2], 16) * \
+                    0x100 + int(s1[8 * 3:8 * 3 + 2], 16)+int(s1[11 * 3:11 * 3 + 2], 16) * 0x0000000 + int(s1[10 * 3:10 * 3 + 2], 16) * \
+                    0x00000
                 Error_Code_Num = int(s1[12 * 3:12 * 3 + 2], 16)
-                Error_code = err_seq[label_seq.index(Error_Code_Num)]
+                if Error_Code_Num in label_seq:
+                    Error_code = err_seq[label_seq.index(Error_Code_Num)]
+                else:
+                    Error_code=s1[12 * 3:12 * 3 + 2]
                 FIM = int(s1[13 * 3:13 * 3 + 2])
                 CE = int(s1[14 * 3:14 * 3 + 2])
                 Die = int(s1[15 * 3:15 * 3 + 2])
