@@ -7,7 +7,6 @@ __author__ = '20093'
 '''
 
 from functools import partial
-import glob
 import os
 from openpyxl import Workbook
 import wx
@@ -49,33 +48,35 @@ def init():
     ws0.merge_cells('S2:T2')
     ws0.cell('S2').value = 'Failing Page'
 
-    ws0.merge_cells('Y2:AB2')
-    ws0.cell('Y2').value = 'Read Error Stamp'
-    ws0.merge_cells('AC2:AD2')
-    ws0.cell('AC2').value = 'sector 1'
-    ws0.merge_cells('AE2:AF2')
-    ws0.cell('AE2').value = 'sector 2'
-    ws0.merge_cells('AG2:AH2')
-    ws0.cell('AG2').value = 'sector 3'
-    ws0.merge_cells('AI2:AJ2')
-    ws0.cell('AI2').value = 'sector 4'
-    ws0.merge_cells('AK2:AL2')
-    ws0.cell('AK2').value = 'sector 5'
-    ws0.merge_cells('AM2:AN2')
-    ws0.cell('AM2').value = 'sector 6'
-    ws0.merge_cells('AO2:AP2')
-    ws0.cell('AO2').value = 'sector 7'
-    ws0.merge_cells('AQ2:AR2')
-    ws0.cell('AQ2').value = 'sector 8'
+    # ws0.merge_cells('Y2:AB2')
+    # ws0.cell('Y2').value = 'Read Error Stamp'
+    # ws0.merge_cells('AC2:AD2')
+    # ws0.cell('AC2').value = 'sector 1'
+    # ws0.merge_cells('AE2:AF2')
+    # ws0.cell('AE2').value = 'sector 2'
+    # ws0.merge_cells('AG2:AH2')
+    # ws0.cell('AG2').value = 'sector 3'
+    # ws0.merge_cells('AI2:AJ2')
+    # ws0.cell('AI2').value = 'sector 4'
+    # ws0.merge_cells('AK2:AL2')
+    # ws0.cell('AK2').value = 'sector 5'
+    # ws0.merge_cells('AM2:AN2')
+    # ws0.cell('AM2').value = 'sector 6'
+    # ws0.merge_cells('AO2:AP2')
+    # ws0.cell('AO2').value = 'sector 7'
+    # ws0.merge_cells('AQ2:AR2')
+    # ws0.cell('AQ2').value = 'sector 8'
 
     ws1.cell(row=ws1_row, column=ws1_col).value = "Error No."
     ws1.cell(row=ws1_row, column=ws1_col + 1).value = "Cycle"
     ws1.cell(row=ws1_row, column=ws1_col + 2).value = "Failure_Type"
     ws1.cell(row=ws1_row, column=ws1_col + 3).value = "status_type"
     ws1.cell(row=ws1_row, column=ws1_col + 4).value = "Channel/FIM"
-    ws1.cell(row=ws1_row, column=ws1_col + 5).value = "Physical blk"
-    ws1.cell(row=ws1_row, column=ws1_col + 6).value = "Page Number"
-    ws1.cell(row=ws1_row, column=ws1_col + 7).value = "Page Type"
+    ws1.cell(row=ws1_row, column=ws1_col + 5).value = "CE"
+    ws1.cell(row=ws1_row, column=ws1_col + 6).value = "Die"
+    ws1.cell(row=ws1_row, column=ws1_col + 7).value = "Physical blk"
+    ws1.cell(row=ws1_row, column=ws1_col + 8).value = "Page Number"
+    ws1.cell(row=ws1_row, column=ws1_col + 9).value = "Page Type"
 
     # ws1.cell(row=ws1_row, column=ws1_col + 8).value = 'sector 0'
     # ws1.cell(row=ws1_row, column=ws1_col + 9).value = 'sector 1'
@@ -88,9 +89,9 @@ def init():
 
 
 def main():
-    errs = "Plane_Failure NO_LOG	NO_LOG_ERASE	MACRO_ERASE	MACRO_PROGRAM	MACRO_READ	LOWER_PAGE_PROGRAM_FAIL	UPPER_PAGE_PROGRAM_FAIL_WITH_LOWER_CORRUPTED	UPPER_PAGE_PROGRAM_FAIL	UPPER_PAGE_PROGRAM_FAIL_WITH_OTHERWL_CORRUPTED	DYN_RD_SUCCESS_OTHERWL_CORRUPTED	LOWER_PAGE_PROGRAM_FAIL_WITH_OTHERWL_CORRUPTED	SLC_PROGRAM_FAIL SLC_DYN_RD_FAIL	DYN_RD_CASE_WITH_DLA_ON_FAIL	DYN_RD_FAIL	GrownBB"
+    errs = "NO_LOG	NO_LOG_ERASE MACRO_ERASE	SLC_MACRO_ERASE	MLC_MACRO_ERASE	MACRO_PROGRAM	MACRO_READ	SLC_MACRO_READ	MLC_MACRO_READ		LOWER_PAGE_PROGRAM_FAIL	UPPER_PAGE_PROGRAM_FAIL_WITH_LOWER_CORRUPTED	UPPER_PAGE_PROGRAM_FAIL	UPPER_PAGE_PROGRAM_FAIL_WITH_OTHERWL_CORRUPTED	DYN_RD_SUCCESS_OTHERWL_CORRUPTED	LOWER_PAGE_PROGRAM_FAIL_WITH_OTHERWL_CORRUPTED	SLC_PROGRAM_FAIL SLC_DYN_RD_FAIL	DYN_RD_CASE_WITH_DLA_ON_FAIL	DYN_RD_FAIL	GrownBB"
 
-    labels = '0xD1 0xEF	0xEE	0x1	0x2	0x3	0x4	0x5	0x6	0x7	0x8	0x9	0xA	0xB	0xC	0xD	0xE'
+    labels = '0xEF	0xEE 0x1 0x11 0x21 0x2	0x3	0x13 0x23 0x4 0x5	0x6	0x7	0x8	0x9	0xA	0xB	0xC	0xD	0xE'
     err_seq = errs.split()
     label_seq = [int(x, 16) for x in labels.split()]
     Errs_dict = {}
@@ -101,7 +102,7 @@ def main():
     err_num = 0
     Tech = raw_input(
         "Please input the plane spec(type 2 for 2 plane or 4 for 4 plane:")
-    if (abs(int(Tech, 10) - 3) <> 1):
+    if (abs(int(Tech, 10) - 3) != 1):
         print "Current Version only supports Ex2 2P or 4P, please restart the script"
         return 0
     die_stack = raw_input("Please input number of dies per chip: ")
@@ -161,7 +162,7 @@ def main():
     excel_name = os.path.dirname(
         filename) + '/' + os.path.basename(filename)[:-4] + '--error log-new.xlsx'
     with open(filename, 'rb') as binary_file:
-        err_num=0
+        err_num = 0
         for block in iter(partial(binary_file.read, bytes_per_line), ''):
             s1 = ' '.join('{0:02x}'.format(ord(b)) for b in block)
             line_num = line_num + 1
@@ -170,26 +171,26 @@ def main():
                 [i + j for i, j in zip(*[["{0:04b}".format(int(c, 16)) for c in reversed("0" + x)][n::2] for n in [1, 0]])]))
             # https://joernhees.de/blog/2010/09/21/how-to-convert-hex-strings-to-binary-ascii-strings-in-python-incl-8bit-space/
             Erlog = '45 72 4c 67'.replace(' ', '')
-            BitFlip=sum(c1 != c2 for c1, c2 in zip(
+            BitFlip = sum(c1 != c2 for c1, c2 in zip(
                 binary(Erlog), binary(s1[0:11].replace(' ', ''))))
             column_offset = 1
 
-            if (BitFlip < 4):
-                err_num =err_num+1
+            if (BitFlip < 8):
+                err_num = err_num + 1
 
                 status_type = s1[6 * 3:6 * 3 + 2]
                 column_offset = 1
                 cycle = int(s1[9 * 3:9 * 3 + 2], 16) * \
-                    0x100 + int(s1[8 * 3:8 * 3 + 2], 16)+int(s1[11 * 3:11 * 3 + 2], 16) * 0x0000000 + int(s1[10 * 3:10 * 3 + 2], 16) * \
+                    0x100 + int(s1[8 * 3:8 * 3 + 2], 16) + int(s1[11 * 3:11 * 3 + 2], 16) * 0x0000000 + int(s1[10 * 3:10 * 3 + 2], 16) * \
                     0x00000
                 Error_Code_Num = int(s1[12 * 3:12 * 3 + 2], 16)
                 if Error_Code_Num in label_seq:
                     Error_code = err_seq[label_seq.index(Error_Code_Num)]
                 else:
-                    Error_code=s1[12 * 3:12 * 3 + 2]
-                FIM = int(s1[13 * 3:13 * 3 + 2])
-                CE = int(s1[14 * 3:14 * 3 + 2])
-                Die = int(s1[15 * 3:15 * 3 + 2])
+                    Error_code = s1[12 * 3:12 * 3 + 2]
+                FIM = int(s1[13 * 3:13 * 3 + 2],16)
+                CE = int(s1[14 * 3:14 * 3 + 2],16)
+                Die = int(s1[15 * 3:15 * 3 + 2],16)
                 blk = int(s1[16 * 3:16 * 3 + 2], 16) + \
                     int(s1[17 * 3:17 * 3 + 2], 16) * 0x100
                 Page = int((s1[18 * 3:18 * 3 + 2]), 16) + \
@@ -204,24 +205,26 @@ def main():
                 ws1.cell(
                     row=err_num + 2, column=column_offset + 3).value = status_type
                 ws1.cell(row=err_num + 2, column=column_offset + 4).value = FIM
-                if Error_Code_Num == 10 or Error_Code_Num == 11:
+                ws1.cell(row=err_num + 2, column=column_offset + 5).value = CE
+                ws1.cell(row=err_num + 2, column=column_offset + 6).value = Die
+                if 'SLC' in Error_code:
                     ws1.cell(row=err_num + 2, column=column_offset +
-                             5).value = hex(Phy_Die * blks_Per_Die + blk)
+                             7).value = hex(blk)
                     ws1.cell(
-                        row=err_num + 2, column=column_offset + 6).value = hex(Page)
+                        row=err_num + 2, column=column_offset + 8).value = hex(Page)
                     ws1.cell(
-                        row=err_num + 2, column=column_offset + 7).value = 'SLC'
+                        row=err_num + 2, column=column_offset + 9).value = 'SLC'
                 else:
                     ws1.cell(row=err_num + 2, column=column_offset +
-                             5).value = hex(Phy_Die * blks_Per_Die + blk)
+                             7).value = hex(blk)
                     ws1.cell(
-                        row=err_num + 2, column=column_offset + 6).value = hex(Page)
-                    if Page == 0 or (Page % 2 == 1 and Page <> 255):
+                        row=err_num + 2, column=column_offset + 8).value = hex(Page)
+                    if Page == 0 or (Page % 2 == 1 and Page != 255):
                         Page_Type = 'LP'
                     else:
                         Page_Type = 'UP'
                     ws1.cell(
-                        row=err_num + 2, column=column_offset + 7).value = Page_Type
+                        row=err_num + 2, column=column_offset + 9).value = Page_Type
 
             elif(s1[0:11] == '52 64 45 72'):
                 column_offset = 25
@@ -243,9 +246,9 @@ def main():
                 # 1).value = int(s1[19 * 3:19 * 3 + 2] + s1[18 * 3:18 * 3 + 2],
                 # 16)
 
-            for i in range(20):
-                ws0.cell(
-                    row=err_num + 2, column=column_offset + i).value = s1[3 * i:3 * i + 2]
+            # for i in range(20):
+            #     ws0.cell(
+            #         row=err_num + 2, column=column_offset + i).value = s1[3 * i:3 * i + 2]
 
             for item in s1:
                 str.append(item)

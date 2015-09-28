@@ -2,9 +2,20 @@ __author__ = '20093'
 import os
 import codecs
 import time
+import wx
 
+def get_dir():
+    app = wx.PySimpleApp()
+    dialog = wx.DirDialog(
+        None, "Choose a directory:", style=wx.DD_DEFAULT_STYLE | wx.DD_NEW_DIR_BUTTON)
+    if dialog.ShowModal() == wx.ID_OK:
+        mydir = dialog.GetPath()
+    else:
+        mydir = None
+    dialog.Destroy()
+    return mydir
 def main():
-    folder='c:/waferstamp'
+    folder=get_dir()
 
     strr=[' ' for i in xrange(100000)]
     line=0

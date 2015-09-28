@@ -19,7 +19,7 @@ def main():
     strr = [0 for x in xrange(1000)]
     strr_num = 3
     strr[0] = "********************************************************"
-    strr[1] = "This API is to check the POR and stamp-reading status on SATA CNE "
+    strr[1] = "This API is to check the POR and stamp-reading status on SATA CNE"
     strr[2] = "By Jinqiang   May 14, 2015"
     strr[3] = "********************************************************"
 

@@ -17,6 +17,16 @@ def get_path(wildcard):
     dialog.Destroy()
     return path
 
+def get_dir():
+    app = wx.PySimpleApp()
+    dialog = wx.DirDialog(
+        None, "Choose a directory:", style=wx.DD_DEFAULT_STYLE | wx.DD_NEW_DIR_BUTTON)
+    if dialog.ShowModal() == wx.ID_OK:
+        mydir = dialog.GetPath()
+    else:
+        mydir = None
+    dialog.Destroy()
+    return mydir
 
 def main():
     folder_list = get_path('*.txt')
@@ -26,7 +36,7 @@ def main():
 
 def findWrong(folder_list):
 
-    dest_folder = 'X:\REL_EFR\personals\Jinqiang\MAPS_Data\LGA_EFR\\2D_EFR'
+    dest_folder = get_dir()
     with open(folder_list, 'r') as fl:
         lines = fl.read().splitlines()
         line_num = 0
