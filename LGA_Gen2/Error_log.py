@@ -188,9 +188,9 @@ def main():
                     Error_code = err_seq[label_seq.index(Error_Code_Num)]
                 else:
                     Error_code = s1[12 * 3:12 * 3 + 2]
-                FIM = int(s1[13 * 3:13 * 3 + 2],16)
-                CE = int(s1[14 * 3:14 * 3 + 2],16)
-                Die = int(s1[15 * 3:15 * 3 + 2],16)
+                FIM = int(s1[13 * 3:13 * 3 + 2], 16)
+                CE = int(s1[14 * 3:14 * 3 + 2], 16)
+                Die = int(s1[15 * 3:15 * 3 + 2], 16)
                 blk = int(s1[16 * 3:16 * 3 + 2], 16) + \
                     int(s1[17 * 3:17 * 3 + 2], 16) * 0x100
                 Page = int((s1[18 * 3:18 * 3 + 2]), 16) + \
@@ -225,6 +225,9 @@ def main():
                         Page_Type = 'UP'
                     ws1.cell(
                         row=err_num + 2, column=column_offset + 9).value = Page_Type
+                if Error_code == 'SLC_PROGRAM_FAIL' and int(die_stack) > 7:
+                    ws1.cell(
+                        row=err_num + 2, column=column_offset + 8).value = hex(Page / 2)
 
             elif(s1[0:11] == '52 64 45 72'):
                 column_offset = 25
@@ -248,7 +251,8 @@ def main():
 
             # for i in range(20):
             #     ws0.cell(
-            #         row=err_num + 2, column=column_offset + i).value = s1[3 * i:3 * i + 2]
+            # row=err_num + 2, column=column_offset + i).value = s1[3 * i:3 * i
+            # + 2]
 
             for item in s1:
                 str.append(item)
