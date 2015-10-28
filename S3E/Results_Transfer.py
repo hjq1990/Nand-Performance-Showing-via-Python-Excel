@@ -30,10 +30,9 @@ def main():
             PC = line[line.find('PC'):line.find('PC') + 3]
             Folder = line[line.rfind('_') + 1:]
             MAPS_sub = line.split(' ')[1]
-
-            dest_folder_sub = os.path.join(dest_folder, line.split(' ')[0][0:line.split(
-                ' ')[0].find('health') - 1] + '-' + Folder + '-' + CNE + '-' + PC)
-
+            sub = line.split(' ')[0][0:line.split(' ')[0].find(
+                'health') - 1] + '-' + Folder + '-' + CNE + '-' + PC
+            dest_folder_sub = os.path.join(dest_folder, sub)
             print MAPS_sub, dest_folder_sub
             if os.path.exists(dest_folder_sub) == 0:
                 os.mkdir(dest_folder_sub)
