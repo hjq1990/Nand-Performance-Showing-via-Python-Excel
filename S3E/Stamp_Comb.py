@@ -16,25 +16,30 @@ def get_path(wildcard):
 
 
 def main():
-    folder_path = get_path('*.txt')
+    file_path = get_path('*.txt')
     stamp_data = [0 for i in xrange(1000000)]
     stamp_num = 0
-    with open(folder_path, 'r') as fl:
+    with open(file_path, 'r') as fl:
         lines = fl.read().splitlines()
 
-        for line in lines:
-            for files in os.listdir(line):
-                if files[-4:] == '.csv' and 'ReadStamp' in files:
-                    with open(line + '/' + files, 'r') as stamp_file:
-                        for stamp_line in stamp_file:
-                            stamp_num = stamp_num + 1
-                            stamp_data[stamp_num] = stamp_line
+        csv_path=map(lambda s:s+'\\ReadStamp.csv',lines)
+        csv_list=filter(lambda s:os.path.exists(s),csv_path)
+        for csv in csv_list:
+            with open(csv,'r') as csv_file:
+                for line in csv_file:
+                    stamp_num+=1
+                    stamp_data[stamp_num]=csv+','+line
+        csv_pending=filter(lambda  s:os.path.exists(s)==0,csv_path)
+        print 'Below folder is not completely:'
+        for i in csv_pending:
+            print i
+        print '***************************************************'
 
-    result_file = folder_path[:-4] + 'combined_wafer_info' + '.txt'
-    with open(result_file, 'w') as result:
-        for i in range(1, stamp_num + 1):
-            a = str(stamp_data[i])
-            result.write(a + '\n')
+    # result_file = file_path[:-4] + 'combined_wafer_info' + '.txt'
+    # with open(result_file, 'w') as result:
+    #     for i in range(1, stamp_num + 1):
+    #         a = str(stamp_data[i])
+    #         result.write(a + '\n')
     print "the result is saved into as below file:", result_file
 
 if __name__ == '__main__':

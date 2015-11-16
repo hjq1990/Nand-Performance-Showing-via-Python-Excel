@@ -1,11 +1,6 @@
 __author__ = '20093'
 import wx
 import os
-import shutil
-import time
-import itertools
-from multiprocessing import Pool
-from multiprocessing.dummy import Pool as ThreadPool
 
 
 def get_path(wildcard):
@@ -20,38 +15,35 @@ def get_path(wildcard):
     return path
 
 
-def get_dir():
-    app = wx.PySimpleApp()
-    dialog = wx.DirDialog(
-        None, "Choose a directory:", style=wx.DD_DEFAULT_STYLE | wx.DD_NEW_DIR_BUTTON)
-    if dialog.ShowModal() == wx.ID_OK:
-        mydir = dialog.GetPath()
-    else:
-        mydir = None
-    dialog.Destroy()
-    return mydir
-
 def main():
-    folder_file=get_path('*.txt')
-    print folder_file,'is selected to check'
-    with open(folder_file,'r') as f:
+
+    folder_file = get_path("*.txt")
+    print folder_file, 'is selected to check'
+    with open(folder_file, 'r') as f:
         lines = f.read().splitlines()
-        TLV_lists=map(lambda s:s+'\\Process_TLV\\rake.parse.log',lines)
-        Rake=filter(lambda s:os.path.exists(s),TLV_lists)
-        Rake_No=filter(lambda s:os.path.exists(s)==0,TLV_lists)
+        TLV_lists = map(lambda s: s.split()[
+                        2] + '\\Process_TLV\\rake.parse.log', lines)
+        Rake = filter(lambda s: os.path.exists(s), TLV_lists)
+        Rake_No = filter(lambda s: os.path.exists(s) == 0, TLV_lists)
         print 'Below folder is not completely decoded:'
         for i in Rake_No:
-            print i,'Not completed decoding'
+            print i, 'Not completed decoding'
         print '***************************************************'
-        for rake_file in Rake:
-            Decode_check(rake_file)
 
-def Decode_check(file):
-    with open(file,'r') as f:
-        lines = f.read().splitlines()
-    print file, 'Contains ', len(lines),'Decoded duts',
-    Pass=filter(lambda s:s[-4:]=='PASS',lines)
-    print len(Pass),'duts passed',len(lines)-len(Pass),'Failed duts'
+        for line in lines:
+
+            TLV = os.path.join(line.split()[2], 'Process_TLV')
+            csv_dut = map(lambda s: os.path.join(TLV, s), os.listdir(TLV))
+            csv_file = filter(lambda s: s[-4:] == '.csv', csv_dut)
+
+            for csv in csv_file:
+                file_size = 0
+                if line.split()[1] == 'bonfire_ext_3.0.bin':
+                    file_size = 4000000000
+                elif line.split()[1] == "EFR_ext_3.0.bin":
+                    file_size = 5000000000
+                if os.path.getsize(csv) < file_size:
+                    print csv[:csv.find('Proce') - 1], csv[csv.find('Proce') + 12:], os.path.getsize(csv), file_size
 
 if __name__ == '__main__':
     main()

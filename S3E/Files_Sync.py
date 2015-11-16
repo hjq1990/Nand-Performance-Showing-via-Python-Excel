@@ -3,7 +3,8 @@ __author__ = '20093'
 import wx
 import os
 import shutil
-import time
+from multiprocessing.dummy import Pool as ThreadPool
+
 
 
 def get_path(wildcard):
@@ -17,11 +18,22 @@ def get_path(wildcard):
     dialog.Destroy()
     return path
 
+def get_dir():
+    app = wx.PySimpleApp()
+    dialog = wx.DirDialog(
+        None, "Choose a directory:", style=wx.DD_DEFAULT_STYLE | wx.DD_NEW_DIR_BUTTON)
+    if dialog.ShowModal() == wx.ID_OK:
+        mydir = dialog.GetPath()
+    else:
+        mydir = None
+    dialog.Destroy()
+    return mydir
+
 
 def main():
-    folder_list = get_path('*.txt')
-    # Sync_MAPS()
-    findWrong(folder_list)
+
+    Sync_MAPS()
+    # findWrong(folder_list)
 
 
 def findWrong(folder_list):
@@ -121,29 +133,32 @@ def findWrong(folder_list):
 
 
 def Sync_MAPS():
-    dest_folder = 'X:\REL_EFR\personals\Jinqiang\MAPS_Data\PTI_S3E'
+
     folder_list = get_path('*.txt')
-    findWrong(folder_list)
+    dest_folder = get_dir()
 
     with open(folder_list, 'r') as fl:
         lines = fl.read().splitlines()
         line_num = 0
         for line in lines:
-            line_num = line_num + 1
-            batch = line_num / 15 + 1
-            CNE = line[line.find('CNE'):line.find('CNE') + 3]
+            MAPS_sub = line + '/maps'
+            CNE = line[line.find('PC')-5:line.find('PC')-1]
             PC = line[line.find('PC'):line.find('PC') + 3]
-            Folder = line[-5:]
-
-            MAPS_sub = line + '/Process_TLV/maps'
+            Folder = line[line.rfind('_') + 1:]
+            sync_path = os.path.join(dest_folder, Folder+'-'+CNE+'-'+PC)
 
             if os.path.exists(MAPS_sub):
-                dest_sub = dest_folder + '/batch' + \
-                    str(batch) + '-' + CNE + '-' + PC + '-' + Folder
-
-                shutil.copytree(MAPS_sub, dest_sub)
-                print 'Sync of this folder finish', MAPS_sub, dest_sub
-
+                if os.path.exists(sync_path)==0:
+                    shutil.copytree(MAPS_sub, sync_path)
+                    print 'Sync of this folder finish', MAPS_sub, sync_path
+                else:
+                    print 'path alreday synced',MAPS_sub,sync_path
+                csv_path=os.path.join(line,'ReadStamp.csv')
+                if os.path.exists(csv_path):
+                    shutil.copy(csv_path,sync_path)
+                    print 'Sync of csv file finish',csv_path,sync_path
+                else:
+                    print csv_path,'Not generated yet'
             else:
                 print line, 'Not processed'
 

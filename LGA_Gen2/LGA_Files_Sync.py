@@ -3,11 +3,8 @@ __author__ = '20093'
 import wx
 import os
 import shutil
-import time
 import itertools
-from multiprocessing import Pool
 from multiprocessing.dummy import Pool as ThreadPool
-
 
 def get_path(wildcard):
     app = wx.App(None)
@@ -20,7 +17,6 @@ def get_path(wildcard):
     dialog.Destroy()
     return path
 
-
 def get_dir():
     app = wx.PySimpleApp()
     dialog = wx.DirDialog(
@@ -31,7 +27,6 @@ def get_dir():
         mydir = None
     dialog.Destroy()
     return mydir
-
 
 def main():
 
