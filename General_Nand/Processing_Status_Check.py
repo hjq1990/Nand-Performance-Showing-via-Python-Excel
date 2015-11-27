@@ -49,19 +49,20 @@ def FBC_Results_Outliers():
         lines=f.read().splitlines()
     head=lines[0]
     BitFlip_col=head.index('BitFlip')
-    Outliers=set()
-    for line in lines[1:]:
-        if line.split(',')[BitFlip_col]>255:
-            Outliers.add(line)
-    for i in Outliers:
-        print i
+    # Outliers=set()
+    # Outlier_line=filter(lambda )
+    # for line in lines[1:]:
+    #     if line.split(',')[BitFlip_col]>255:
+    #         Outliers.add(','.join(line.split(',')[0:BitFlip_col-1]))
+    # for i in Outliers:
+    #     print i
 
 
 
 def S3E_Processing_Status():
     print "Please select the txt file containing folder lists:"
     file_name = get_path('*.txt')
-    print 'You have selected function: ', func, 'on this file', file_name
+    print 'You have selected function S3E Processing Status  Check on this file', file_name
     with open(file_name, 'r') as f:
         folders = f.read().splitlines()
 
