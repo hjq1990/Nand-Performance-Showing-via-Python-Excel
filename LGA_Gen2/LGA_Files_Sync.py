@@ -47,6 +47,9 @@ def Sync_folder(line):
     PC = line[line.find('PC'):line.find('PC') + 3]
     Folder = line[line.rfind('_') + 1:]
     sync_path = dest_folder + '/' + Folder + '-' + CNE + '-' + PC
+    if os.path.exists(sync_path)==1:
+        print 'Already exists sync folder',sync_path
+        return 1
     os.mkdir(sync_path)
     print sync_path
     files_to_sync = filter(lambda files: (files[-4:] == '.csv' and files[
