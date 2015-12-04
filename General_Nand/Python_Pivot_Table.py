@@ -34,7 +34,7 @@ def main():
 
         Histo = pd.read_csv(file_path)
         sns.set()  # use seaborn styles
-        Histo.pivot_table('Count', index=['BitFlip'], columns=[''], aggfunc='sum').plot()
+        Histo.pivot_table('Count', index=['BitFlip'], columns=['Lot','Level'], aggfunc='sum').plot()
         plt.title('Histogram by Lot')
         plt.xlabel('Bitflip')
         plt.ylabel('Number of MU')
@@ -44,7 +44,7 @@ def main():
         print 'Will generate Cr or Tr grade chart'
         Grade=pd.read_csv(file_path)
         sns.set()  # use seaborn styles
-        Grade.pivot_table('CrGrade', index=['Block'], columns=['Level'], aggfunc='max').plot()
+        Grade.pivot_table('Count', index=['CrGrade'], columns=['Level'], aggfunc='max').plot()
         plt.title('Cr Grade by Lot')
         plt.xlabel('Bitflip')
         plt.ylabel('Number of MU')
